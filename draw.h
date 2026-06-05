@@ -152,21 +152,23 @@ static bool SidebarButton(const char* label, const char* icon, bool selected, fl
     ImDrawList* dl = window->DrawList;
     
     if (selected) {
-        ImU32 gradCol1 = IM_COL32(255, 0, 170, 255);
-        ImU32 gradCol2 = IM_COL32(160, 0, 255, 255);
+        // Elegant violet-to-gold gradient for selected state
+        ImU32 gradCol1 = IM_COL32(180, 110, 220, 255);
+        ImU32 gradCol2 = IM_COL32(200, 140, 240, 255);
         dl->AddRectFilled(bb.Min, bb.Max, gradCol1, 20.0f);
-        dl->AddRectFilled(ImVec2(bb.Min.x, bb.Min.y + 2), ImVec2(bb.Min.x + 6, bb.Max.y - 2), IM_COL32(100, 200, 255, 255), 3.0f);
+        dl->AddRectFilled(ImVec2(bb.Min.x, bb.Min.y + 2), ImVec2(bb.Min.x + 6, bb.Max.y - 2), IM_COL32(220, 180, 255, 255), 3.0f);
     } else if (animT > 0.01f) {
-        ImU32 hoverCol = IM_COL32(50, 50, 60, (int)(180 * animT));
+        // Elegant hover state with soft dark overlay
+        ImU32 hoverCol = IM_COL32(100, 80, 120, (int)(120 * animT));
         dl->AddRectFilled(bb.Min, bb.Max, hoverCol, 12.0f);
     }
 
     float iconOffset = 8.0f * animT;
     ImVec2 iconPos = ImVec2(bb.Min.x + 22.0f + iconOffset, bb.Min.y + (size.y - g.FontSize) * 0.5f);
-    dl->AddText(iconPos, selected ? IM_COL32(255, 255, 255, 255) : IM_COL32(140, 140, 160, (int)(180 + 75 * animT)), icon);
+    dl->AddText(iconPos, selected ? IM_COL32(255, 255, 255, 255) : IM_COL32(180, 170, 200, (int)(200 + 55 * animT)), icon);
     
     ImVec2 textPos = ImVec2(bb.Min.x + 58.0f + iconOffset, bb.Min.y + (size.y - g.FontSize) * 0.5f);
-    dl->AddText(textPos, selected ? IM_COL32(255, 255, 255, 255) : IM_COL32(200, 200, 215, (int)(200 + 55 * animT)), label);
+    dl->AddText(textPos, selected ? IM_COL32(255, 255, 255, 255) : IM_COL32(220, 210, 240, (int)(220 + 35 * animT)), label);
 
     return pressed;
 }
@@ -203,14 +205,14 @@ static bool ToggleSwitch(const char* label, bool* v) {
     ImDrawList* dl = window->DrawList;
     
     if (hovered) {
-        dl->AddRectFilled(bb.Min, bb.Max, IM_COL32(45, 45, 55, 100), 10.0f);
+        dl->AddRectFilled(bb.Min, bb.Max, IM_COL32(140, 100, 170, 80), 10.0f);
     }
     
     ImVec2 togglePos = ImVec2(bb.Max.x - width - 15.0f, bb.Min.y + (size.y - height) * 0.5f);
     ImVec2 toggleEnd = ImVec2(togglePos.x + width, togglePos.y + height);
     
-    ImVec4 offColor = ImVec4(0.27f, 0.27f, 0.31f, 1.0f);
-    ImVec4 onColor = ImVec4(1.0f, 0.0f, 0.75f, 1.0f);
+    ImVec4 offColor = ImVec4(0.35f, 0.30f, 0.40f, 1.0f);
+    ImVec4 onColor = ImVec4(0.75f, 0.50f, 0.95f, 1.0f);
     ImVec4 bgColorV = ImLerp(offColor, onColor, animT);
     dl->AddRectFilled(togglePos, toggleEnd, ImColor(bgColorV), radius);
     
@@ -221,7 +223,7 @@ static bool ToggleSwitch(const char* label, bool* v) {
     dl->AddCircleFilled(ImVec2(knobX, knobY), knobR + 2.0f, IM_COL32(0, 0, 0, 40));
     dl->AddCircleFilled(ImVec2(knobX, knobY), knobR, IM_COL32(255, 255, 255, 255));
 
-    dl->AddText(ImVec2(bb.Min.x + 15.0f, bb.Min.y + (size.y - textSize.y) * 0.5f), IM_COL32(230, 230, 240, 255), label);
+    dl->AddText(ImVec2(bb.Min.x + 15.0f, bb.Min.y + (size.y - textSize.y) * 0.5f), IM_COL32(240, 230, 255, 255), label);
 
     return pressed;
 }
@@ -256,7 +258,7 @@ INLINE void DrawAutoQueue() {
 
         SetNextWindowPos(ImVec2(Width / 2.0f, Height / 2.0f), ImGuiCond_Always, ImVec2(0.5f, 0.5f));
         SetNextWindowSize(ImVec2(360, 260), ImGuiCond_Always);
-        PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.10f, 0.10f, 0.12f, 0.98f));
+        PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.12f, 0.10f, 0.16f, 0.98f));
         PushStyleVar(ImGuiStyleVar_WindowRounding, 20.0f);
 
         if (Begin(O("##AutoQueue"), nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings)) {
@@ -264,8 +266,8 @@ INLINE void DrawAutoQueue() {
             ImVec2 winPos = GetWindowPos();
             ImVec2 winSize = GetWindowSize();
             
-            DrawGradientRect(dl, winPos, ImVec2(winPos.x + winSize.x, winPos.y + 70), IM_COL32(40, 100, 180, 255), IM_COL32(60, 140, 200, 255), true);
-            dl->AddRectFilled(winPos, ImVec2(winPos.x + winSize.x, winPos.y + 20), IM_COL32(40, 100, 180, 255), 20.0f, ImDrawFlags_RoundCornersTop);
+            DrawGradientRect(dl, winPos, ImVec2(winPos.x + winSize.x, winPos.y + 70), IM_COL32(160, 110, 200, 255), IM_COL32(190, 140, 230, 255), true);
+            dl->AddRectFilled(winPos, ImVec2(winPos.x + winSize.x, winPos.y + 20), IM_COL32(160, 110, 200, 255), 20.0f, ImDrawFlags_RoundCornersTop);
             
             ImVec2 titleSize = CalcTextSize(O("Auto Queue"));
             dl->AddText(ImVec2(winPos.x + (winSize.x - titleSize.x) * 0.5f, winPos.y + 22), IM_COL32(255, 255, 255, 255), O("Auto Queue"));
@@ -277,14 +279,14 @@ INLINE void DrawAutoQueue() {
             std::string count_str = std::to_string((remaining_ms / 1000) + 1);
             auto text_size = CalcTextSize(count_str.c_str());
             SetCursorPosX((winSize.x - text_size.x) * 0.5f);
-            TextColored(ImVec4(0.35f, 0.7f, 1.0f, 1.0f), "%s", count_str.c_str());
+            TextColored(ImVec4(0.75f, 0.50f, 1.0f, 1.0f), "%s", count_str.c_str());
 
             SetWindowFontScale(1.0f);
 
             SetCursorPosY(winSize.y - 75);
             SetCursorPosX(25);
-            PushStyleColor(ImGuiCol_Button, ImVec4(0.75f, 0.25f, 0.25f, 1.0f));
-            PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.85f, 0.35f, 0.35f, 1.0f));
+            PushStyleColor(ImGuiCol_Button, ImVec4(0.80f, 0.35f, 0.45f, 1.0f));
+            PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.90f, 0.45f, 0.55f, 1.0f));
             PushStyleVar(ImGuiStyleVar_FrameRounding, 12.0f);
             
             if (Button(O("Cancel"), ImVec2(winSize.x - 50, 50))) {
@@ -400,8 +402,9 @@ static void DrawSidebar(float sidebarW, float winH) {
     ImDrawList* dl = GetWindowDrawList();
     ImVec2 winPos = GetWindowPos();
     
-    DrawGradientRect(dl, winPos, ImVec2(winPos.x + sidebarW, winPos.y + winH), IM_COL32(10, 8, 18, 255), IM_COL32(28, 28, 35, 255), false);
-    dl->AddLine(ImVec2(winPos.x + sidebarW, winPos.y), ImVec2(winPos.x + sidebarW, winPos.y + winH), IM_COL32(55, 55, 65, 255), 1.0f);
+    // Elegant gradient: deep purple to dark violet
+    DrawGradientRect(dl, winPos, ImVec2(winPos.x + sidebarW, winPos.y + winH), IM_COL32(35, 25, 50, 255), IM_COL32(50, 35, 65, 255), false);
+    dl->AddLine(ImVec2(winPos.x + sidebarW, winPos.y), ImVec2(winPos.x + sidebarW, winPos.y + winH), IM_COL32(120, 90, 150, 255), 1.5f);
     
     SetCursorPos(ImVec2(0, 25));
     
@@ -410,14 +413,14 @@ static void DrawSidebar(float sidebarW, float winH) {
     Dummy(ImVec2(sidebarW, 5));
     SetCursorPosX(25);
     
-    PushStyleColor(ImGuiCol_Text, ImVec4(0.4f, 0.75f, 1.0f, 1.0f));
+    PushStyleColor(ImGuiCol_Text, ImVec4(0.85f, 0.70f, 1.0f, 1.0f));
     SetWindowFontScale(1.2f);
     Text(O("QP"));
     SetWindowFontScale(1.0f);
     PopStyleColor();
     
     SetCursorPosX(25);
-    TextColored(ImVec4(0.55f, 0.55f, 0.6f, 1.0f), O("First Edition  v1.0"));
+    TextColored(ImVec4(0.75f, 0.65f, 0.85f, 1.0f), O("First Edition  v1.0"));
     
     Dummy(ImVec2(sidebarW, 35));
     
@@ -448,8 +451,8 @@ static void DrawContentArea(float sidebarW, float winW, float winH) {
     ImVec2 bodyPos = ImVec2(winPos.x + sidebarW, winPos.y);
     ImVec2 bodySize = ImVec2(winW - sidebarW, winH);
 
-    // 1. رسم لون الخلفية الأساسي الشفاف للمحتوى
-    DrawGradientRect(dl, ImVec2(winPos.x + sidebarW, winPos.y), ImVec2(winPos.x + winW, winPos.y + winH), IM_COL32(10, 8, 22, 252), IM_COL32(20, 16, 32, 252), false);
+    // 1. رسم لون الخلفية الأساسي الشفاف للمحتوى - elegant dark gradient
+    DrawGradientRect(dl, ImVec2(winPos.x + sidebarW, winPos.y), ImVec2(winPos.x + winW, winPos.y + winH), IM_COL32(18, 12, 28, 252), IM_COL32(28, 18, 40, 252), false);
 
     // 2. توليد شبكة البليكسس النيون برمجياً بدقة وحركة انسيابية ممتازة وبأعلى سطوع (Alpha 230) تماشياً مع الـ cmath
     static float anim_time = 0.0f;
@@ -481,20 +484,20 @@ static void DrawContentArea(float sidebarW, float winW, float winH) {
             float dist = sqrtf(dx*dx + dy*dy);
             
             if (dist < (bodySize.x * 0.45f)) {
-                // خطوط نيون مضيئة جداً وصارخة بالخلفية بدلاً من اللون الأخضر الثابت
-                dl->AddLine(actual_pts[i], actual_pts[j], IM_COL32(0, 255, 127, (int)(230 * (1.0f - dist / (bodySize.x * 0.45f)))), 2.0f);
+                // Elegant violet-cyan gradient lines
+                dl->AddLine(actual_pts[i], actual_pts[j], IM_COL32(180, 120, 220, (int)(200 * (1.0f - dist / (bodySize.x * 0.45f)))), 2.0f);
             }
         }
     }
 
     // 3. خط التقسيم العلوي الموزون هندسياً مالتك لمنع التلابس الأبعاد
-    dl->AddLine(ImVec2(winPos.x + sidebarW, winPos.y + 75), ImVec2(winPos.x + winW, winPos.y + 75), IM_COL32(60, 60, 75, 255), 1.2f);
+    dl->AddLine(ImVec2(winPos.x + sidebarW, winPos.y + 75), ImVec2(winPos.x + winW, winPos.y + 75), IM_COL32(120, 90, 150, 255), 1.2f);
     
     const char* tabTitles[] = { "ESP Settings", "Auto Play", "Auto Queue", "Info" };
     
     SetCursorPos(ImVec2(sidebarW + 35, 28));
     SetWindowFontScale(1.25f);
-    TextColored(ImVec4(1.0f, 1.0f, 1.0f, 1.0f), "%s", tabTitles[g_menu.currentTab]);
+    TextColored(ImVec4(0.95f, 0.90f, 1.0f, 1.0f), "%s", tabTitles[g_menu.currentTab]);
     SetWindowFontScale(1.0f);
     
     // 4. ضبط موقع بداية رسم أزرار التفعيل مالتك داخل الـ Child بالأبعاد الصحيحة لمنع الاختفاء
@@ -520,20 +523,20 @@ static void DrawContentArea(float sidebarW, float winW, float winH) {
             Dummy(ImVec2(0, 15));
             need_save |= ToggleSwitch(O("Enable Auto Play"), &persistent_bool[O("bAutoPlay")]);
             Dummy(ImVec2(0, 25));
-            TextColored(ImVec4(0.65f, 0.65f, 0.7f, 1.0f), O("Auto play will automatically"));
-            TextColored(ImVec4(0.65f, 0.65f, 0.7f, 1.0f), O("aim and shoot for you"));
+            TextColored(ImVec4(0.80f, 0.75f, 0.90f, 1.0f), O("Auto play will automatically"));
+            TextColored(ImVec4(0.80f, 0.75f, 0.90f, 1.0f), O("aim and shoot for you"));
             break;
         }
         case 2: {
             Dummy(ImVec2(0, 15));
             need_save |= ToggleSwitch(O("Enable Auto Queue"), &persistent_bool[O("bAutoQueue")]);
             Dummy(ImVec2(0, 20));
-            TextColored(ImVec4(0.8f, 0.8f, 0.85f, 1.0f), O("Mode"));
+            TextColored(ImVec4(0.90f, 0.85f, 0.95f, 1.0f), O("Mode"));
             Dummy(ImVec2(0, 10));
             PushStyleVar(ImGuiStyleVar_FrameRounding, 10.0f);
             PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(15, 12));
-            PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.14f, 0.14f, 0.18f, 1.0f));
-            PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.18f, 0.18f, 0.22f, 1.0f));
+            PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.20f, 0.15f, 0.28f, 1.0f));
+            PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.28f, 0.20f, 0.38f, 1.0f));
             SetNextItemWidth(GetContentRegionAvail().x);
             need_save |= Combo("##mode", &persistent_int["iAutoQueue_Mode"], "Last Selected\0Smart\0");
             PopStyleColor(2);
@@ -542,19 +545,19 @@ static void DrawContentArea(float sidebarW, float winW, float winH) {
         }
         case 3: {
             Dummy(ImVec2(0, 20));
-            TextColored(ImVec4(0.75f, 0.75f, 0.8f, 1.0f), O("License Information"));
+            TextColored(ImVec4(0.90f, 0.85f, 0.95f, 1.0f), O("License Information"));
             Dummy(ImVec2(0, 15));
-            TextColored(ImVec4(0.55f, 0.55f, 0.65f, 1.0f), O("Developer: "));
+            TextColored(ImVec4(0.75f, 0.70f, 0.85f, 1.0f), O("Developer: "));
             SameLine();
-            TextColored(ImVec4(0.9f, 0.9f, 1.0f, 1.0f), O("@Qst_30"));
+            TextColored(ImVec4(0.95f, 0.90f, 1.0f, 1.0f), O("@Qst_30"));
             Dummy(ImVec2(0, 10));
-            TextColored(ImVec4(0.55f, 0.55f, 0.65f, 1.0f), O("Expiry Date: "));
+            TextColored(ImVec4(0.75f, 0.70f, 0.85f, 1.0f), O("Expiry Date: "));
             SameLine();
-            TextColored(ImVec4(0.9f, 0.9f, 1.0f, 1.0f), g_ExpTime.c_str());
+            TextColored(ImVec4(0.95f, 0.90f, 1.0f, 1.0f), g_ExpTime.c_str());
             Dummy(ImVec2(0, 20));
-            TextColored(ImVec4(0.55f, 0.55f, 0.65f, 1.0f), O("Version: "));
+            TextColored(ImVec4(0.75f, 0.70f, 0.85f, 1.0f), O("Version: "));
             SameLine();
-            TextColored(ImVec4(0.9f, 0.9f, 1.0f, 1.0f), O("QP PRO v1.0"));
+            TextColored(ImVec4(0.95f, 0.90f, 1.0f, 1.0f), O("QP PRO v1.0"));
             break;
         }
     }
@@ -584,15 +587,16 @@ INLINE void DrawMenu(ImGuiIO& io) {
         }
 
         if (g_menu.menuAlpha > 0.01f) {
-            float winW = 800.0f;
-            float winH = 580.0f;
+            // Increased dimensions for better visual hierarchy
+            float winW = 900.0f;
+            float winH = 650.0f;
 
             
             SetNextWindowSize(ImVec2(winW, winH), ImGuiCond_Always);
             SetNextWindowPos(ImVec2(Width / 2.0f, Height / 2.0f), ImGuiCond_FirstUseEver, ImVec2(0.5f, 0.5f));
             
-            PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.05f, 0.03f, 0.09f, g_menu.menuAlpha));
-            PushStyleVar(ImGuiStyleVar_WindowRounding, 16.0f);
+            PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.08f, 0.04f, 0.14f, g_menu.menuAlpha));
+            PushStyleVar(ImGuiStyleVar_WindowRounding, 18.0f);
             PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
             PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
             PushStyleVar(ImGuiStyleVar_Alpha, g_menu.menuAlpha);
@@ -601,8 +605,9 @@ INLINE void DrawMenu(ImGuiIO& io) {
             
             if (Begin(O("##MainMenu"), &g_menu.isOpen, winFlags)) {
                 // استدعاء السايدبار والمحتوى مالت الصور المتحركة بالتوازي
-                DrawSidebar(210.0f, winH);
-                DrawContentArea(210.0f, winW, winH);
+                // Increased sidebar width proportionally
+                DrawSidebar(260.0f, winH);
+                DrawContentArea(260.0f, winW, winH);
             }
             End();
             
@@ -618,7 +623,8 @@ static void DrawFloatingButton(ImGuiIO& io) {
     static bool isDragging = false;
     static float hoverAnim = 0.0f;
     
-    float buttonRadius = 38.0f;
+    // Enlarged wolf button
+    float buttonRadius = 45.0f;
     float buttonSize = buttonRadius * 2.0f;
     float totalWidth = buttonSize; 
     float totalHeight = buttonSize;
@@ -631,7 +637,7 @@ static void DrawFloatingButton(ImGuiIO& io) {
     PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
     PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
     
-    if (Begin(O("##FloatBtnNeonWolf"), nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings)) {
+    if (Begin(O("##FloatBtnNeonWolf"), nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoMove | [...
         ImDrawList* dl = GetWindowDrawList();
         ImVec2 center = ImVec2(buttonPos.x + buttonRadius + 2, buttonPos.y + buttonRadius + 2);
         
@@ -641,46 +647,50 @@ static void DrawFloatingButton(ImGuiIO& io) {
         
         float targetHover = isHovered ? 1.0f : 0.0f;
         hoverAnim += (targetHover - hoverAnim) * io.DeltaTime * 10.0f;
-        float currentRadius = buttonRadius + hoverAnim * 4.0f;
+        float currentRadius = buttonRadius + hoverAnim * 5.0f;
         
-        // 1. رسم الحلقات والإطار الخارجي النيون الفخم مالتك
+        // 1. رسم الحلقات والإطار الخارجي النيون الفخم مالتك - Elegant violet/gold theme
         dl->AddCircleFilled(ImVec2(center.x + 2, center.y + 3), currentRadius, IM_COL32(0, 0, 0, 70), 32); 
-        dl->AddCircleFilled(center, currentRadius, IM_COL32(255, 0, 170, 255), 32); 
-        dl->AddCircleFilled(center, currentRadius - 3, IM_COL32(15, 12, 28, 255), 32); // خلفية المنيو الداكنة
-        dl->AddCircle(center, currentRadius, IM_COL32(100, 200, 255, (int)(200 + 55 * hoverAnim)), 32, 2.5f); 
+        dl->AddCircleFilled(center, currentRadius, IM_COL32(200, 130, 240, 255), 32);  // Elegant violet
+        dl->AddCircleFilled(center, currentRadius - 3, IM_COL32(20, 12, 32, 255), 32); // خلفية المنيو الداكنة
+        dl->AddCircle(center, currentRadius, IM_COL32(220, 180, 255, (int)(200 + 55 * hoverAnim)), 32, 3.0f);  // Elegant accent
 
-        // 2. 🐺 [رسم وجه ذئب نيون هندسي خارق ومتطور بالمتجهات برمجياً مية بالمية تماشياً مع الـ cmath والوقت]
+        // 2. 🐺 [رسم وجه ذئب نيون هندسي خارق ومتطور بالمتجهات برمجياً - ENLARGED and IMPROVED]
         float t = ImGui::GetTime() * 3.0f;
-        // نبض وإضاءة النيون المتغيرة مع الوقت للذئب
-        ImU32 wolfColor = IM_COL32(0, 255, 150, (int)(200 + sinf(t) * 55)); 
-        ImU32 eyeColor  = IM_COL32(255, 0, 100, 255); // عيون حمراء صارخة للذئب
+        // نبض وإضاءة النيون المتغيرة مع الوقت للذئب - enhanced brightness
+        ImU32 wolfColor = IM_COL32(220, 180, 255, (int)(230 + sinf(t) * 25)); 
+        ImU32 eyeColor  = IM_COL32(255, 100, 200, 255); // Elegant pink-magenta eyes
         
-        // نقاط وإحداثيات وجه الذئب الموزونة هندسياً بمركز الدائرة
-        ImVec2 top_head(center.x, center.y - 22);
-        ImVec2 nose(center.x, center.y + 20);
-        ImVec2 left_ear(center.x - 18, center.y - 24);
-        ImVec2 right_ear(center.x + 18, center.y - 24);
-        ImVec2 left_eye(center.x - 8, center.y - 2);
-        ImVec2 right_eye(center.x + 8, center.y - 2);
-        ImVec2 left_jaw(center.x - 16, center.y + 4);
-        ImVec2 right_jaw(center.x + 16, center.y + 4);
-        ImVec2 forehead_left(center.x - 10, center.y - 12);
-        ImVec2 forehead_right(center.x + 10, center.y - 12);
+        // نقاط وإحداثيات وجه الذئب الموزونة هندسياً بمركز الدائرة - SCALED UP
+        ImVec2 top_head(center.x, center.y - 28);
+        ImVec2 nose(center.x, center.y + 24);
+        ImVec2 left_ear(center.x - 22, center.y - 30);
+        ImVec2 right_ear(center.x + 22, center.y - 30);
+        ImVec2 left_eye(center.x - 10, center.y - 2);
+        ImVec2 right_eye(center.x + 10, center.y - 2);
+        ImVec2 left_jaw(center.x - 19, center.y + 6);
+        ImVec2 right_jaw(center.x + 19, center.y + 6);
+        ImVec2 forehead_left(center.x - 12, center.y - 15);
+        ImVec2 forehead_right(center.x + 12, center.y - 15);
 
-        // رسم الخطوط الهندسية المضيئة لوجه الذئب النيون
-        dl->AddLine(left_ear, forehead_left, wolfColor, 1.8f);
-        dl->AddLine(right_ear, forehead_right, wolfColor, 1.8f);
-        dl->AddLine(forehead_left, top_head, wolfColor, 1.5f);
-        dl->AddLine(forehead_right, top_head, wolfColor, 1.5f);
-        dl->AddLine(forehead_left, left_jaw, wolfColor, 1.5f);
-        dl->AddLine(forehead_right, right_jaw, wolfColor, 1.5f);
-        dl->AddLine(left_jaw, nose, wolfColor, 1.8f);
-        dl->AddLine(right_jaw, nose, wolfColor, 1.8f);
-        dl->AddLine(top_head, nose, wolfColor, 1.2f); // الخط النصفي للملامح
+        // رسم الخطوط الهندسية المضيئة لوجه الذئب النيون - THICKER and SMOOTHER
+        dl->AddLine(left_ear, forehead_left, wolfColor, 2.2f);
+        dl->AddLine(right_ear, forehead_right, wolfColor, 2.2f);
+        dl->AddLine(forehead_left, top_head, wolfColor, 2.0f);
+        dl->AddLine(forehead_right, top_head, wolfColor, 2.0f);
+        dl->AddLine(forehead_left, left_jaw, wolfColor, 2.0f);
+        dl->AddLine(forehead_right, right_jaw, wolfColor, 2.0f);
+        dl->AddLine(left_jaw, nose, wolfColor, 2.2f);
+        dl->AddLine(right_jaw, nose, wolfColor, 2.2f);
+        dl->AddLine(top_head, nose, wolfColor, 1.8f); // الخط النصفي للملامح
 
-        // رسم العيون المتوهجة للذئب
-        dl->AddTriangleFilled(left_eye, ImVec2(left_eye.x - 4, left_eye.y - 3), ImVec2(left_eye.x + 2, left_eye.y - 2), eyeColor);
-        dl->AddTriangleFilled(right_eye, ImVec2(right_eye.x + 4, right_eye.y - 3), ImVec2(right_eye.x - 2, right_eye.y - 2), eyeColor);
+        // رسم العيون المتوهجة للذئب - LARGER and MORE VISIBLE
+        dl->AddTriangleFilled(left_eye, ImVec2(left_eye.x - 5, left_eye.y - 4), ImVec2(left_eye.x + 2, left_eye.y - 2), eyeColor);
+        dl->AddTriangleFilled(right_eye, ImVec2(right_eye.x + 5, right_eye.y - 4), ImVec2(right_eye.x - 2, right_eye.y - 2), eyeColor);
+        
+        // Add glow effect to eyes
+        dl->AddCircle(left_eye, 6.0f, eyeColor, 0, 1.0f);
+        dl->AddCircle(right_eye, 6.0f, eyeColor, 0, 1.0f);
 
         // 3. تفعيل السحب والجر والإفلات للزر بدون أي تلابس بالأبعاد
         if (IsItemActive() && IsMouseDragging(0)) {
@@ -713,7 +723,7 @@ INLINE void DrawLogin(ImGuiIO& io) {
     SetNextWindowPos(ImVec2(0, 0));
     SetNextWindowSize(io.DisplaySize);
     PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.04f, 0.04f, 0.06f, 0.96f));
-    Begin(O("##Overlay"), nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoInputs | ImGuiWindowFlags_NoSavedSettings);
+    Begin(O("##Overlay"), nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoInputs | ImGuiWindowFlags_[...]
     PopStyleColor();
 
     float cardW = 580;
@@ -722,7 +732,7 @@ INLINE void DrawLogin(ImGuiIO& io) {
     SetNextWindowSize(ImVec2(cardW, cardH), ImGuiCond_Always);
     SetNextWindowPos(ImVec2(io.DisplaySize.x * 0.5f, io.DisplaySize.y * 0.5f), ImGuiCond_Always, ImVec2(0.5f, 0.5f));
 
-    PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.11f, 0.11f, 0.14f, 1.0f));
+    PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.13f, 0.09f, 0.18f, 1.0f));
     PushStyleVar(ImGuiStyleVar_WindowRounding, 20.0f);
     PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
     PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
@@ -732,8 +742,8 @@ INLINE void DrawLogin(ImGuiIO& io) {
     ImDrawList* dl = GetWindowDrawList();
     ImVec2 winPos = GetWindowPos();
     
-    DrawGradientRect(dl, winPos, ImVec2(winPos.x + cardW, winPos.y + 110), IM_COL32(35, 95, 170, 255), IM_COL32(55, 125, 200, 255), true);
-    dl->AddRectFilled(winPos, ImVec2(winPos.x + cardW, winPos.y + 20), IM_COL32(35, 95, 170, 255), 20.0f, ImDrawFlags_RoundCornersTop);
+    DrawGradientRect(dl, winPos, ImVec2(winPos.x + cardW, winPos.y + 110), IM_COL32(160, 110, 200, 255), IM_COL32(190, 140, 230, 255), true);
+    dl->AddRectFilled(winPos, ImVec2(winPos.x + cardW, winPos.y + 20), IM_COL32(160, 110, 200, 255), 20.0f, ImDrawFlags_RoundCornersTop);
 
     SetWindowFontScale(1.4f);
     ImVec2 titleSize = CalcTextSize("QP ENGINE");
@@ -741,7 +751,7 @@ INLINE void DrawLogin(ImGuiIO& io) {
     SetWindowFontScale(1.0f);
     
     ImVec2 subSize = CalcTextSize("Premium 8 Ball Pool Mod");
-    dl->AddText(ImVec2(winPos.x + (cardW - subSize.x) * 0.5f, winPos.y + 70), IM_COL32(200, 220, 255, 200), "Premium 8 Ball Pool Mod");
+    dl->AddText(ImVec2(winPos.x + (cardW - subSize.x) * 0.5f, winPos.y + 70), IM_COL32(220, 200, 240, 200), "Premium 8 Ball Pool Mod");
 
     SetCursorPosY(130);
 
@@ -769,28 +779,28 @@ INLINE void DrawLogin(ImGuiIO& io) {
                 spinnerCenter.x + cosf(angle) * spinner_size,
                 spinnerCenter.y + sinf(angle) * spinner_size
             );
-            dl->AddCircleFilled(dotPos, 6.0f, IM_COL32(100, 180, 255, (int)(alpha * 255)));
+            dl->AddCircleFilled(dotPos, 6.0f, IM_COL32(180, 130, 220, (int)(alpha * 255)));
         }
 
         ImVec2 loadingSize = CalcTextSize("Authenticating...");
         SetCursorPosX((cardW - loadingSize.x) * 0.5f);
         SetCursorPosY(290);
-        TextColored(ImVec4(0.6f, 0.6f, 0.65f, 1.0f), "Authenticating...");
+        TextColored(ImVec4(0.75f, 0.65f, 0.85f, 1.0f), "Authenticating...");
     } else {
         SetCursorPosY(160);
         
         ImVec2 infoSize = CalcTextSize("Copy your license key and tap login");
         SetCursorPosX((cardW - infoSize.x) * 0.5f);
-        TextColored(ImVec4(0.55f, 0.55f, 0.6f, 1.0f), "Copy your license key and tap login");
+        TextColored(ImVec4(0.70f, 0.60f, 0.80f, 1.0f), "Copy your license key and tap login");
         
         Dummy(ImVec2(0, 50));
         
         bool AutoLogin = first_time && !persistent_string["key"].empty();
         
         SetCursorPosX(40);
-        PushStyleColor(ImGuiCol_Button, ImVec4(0.20f, 0.50f, 0.80f, 1.0f));
-        PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.25f, 0.58f, 0.90f, 1.0f));
-        PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.18f, 0.45f, 0.72f, 1.0f));
+        PushStyleColor(ImGuiCol_Button, ImVec4(0.50f, 0.30f, 0.70f, 1.0f));
+        PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.60f, 0.40f, 0.80f, 1.0f));
+        PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.45f, 0.25f, 0.65f, 1.0f));
         PushStyleVar(ImGuiStyleVar_FrameRounding, 14.0f);
         
         if (AutoLogin || Button("LOGIN WITH CLIPBOARD", ImVec2(cardW - 80, 65))) {
@@ -816,7 +826,7 @@ INLINE void DrawLogin(ImGuiIO& io) {
         
         ImVec2 helpSize = CalcTextSize("Your key will be read from clipboard");
         SetCursorPosX((cardW - helpSize.x) * 0.5f);
-        TextColored(ImVec4(0.42f, 0.42f, 0.48f, 1.0f), "Your key will be read from clipboard");
+        TextColored(ImVec4(0.60f, 0.50f, 0.70f, 1.0f), "Your key will be read from clipboard");
     }
 
     End();
